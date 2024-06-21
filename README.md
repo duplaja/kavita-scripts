@@ -1,4 +1,4 @@
-# kavita-scripts
+# Kavita Scripts
 Various scripts to use with Kavita
 
 ## [Epub Fix GUI Local](https://github.com/duplaja/kavita-scripts/blob/main/epub-fix-gui-local.py)
