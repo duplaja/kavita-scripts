@@ -6,10 +6,23 @@ from tkinter import filedialog
 from tkinter import ttk
 from tkinter import messagebox
 
+###################################################
+#
+# Modify only the line below
+#
+###################################################
+
+kavita_root = '' #Modify to set Kavita root, such as: /home/bob/kavita. Leave blank to keep as the directory this script runs in.
+
+###################################################
+#
+# Stop modifying
+#
+####################################################
+
+
 def get_kavita_root():
-
-    kavita_root = '' #Modify to set Kavita root, such as: /home/bob/kavita
-
+    
     if kavita_root == '':
         kavita_root = Path().resolve()
     else:
@@ -18,10 +31,9 @@ def get_kavita_root():
     return kavita_root 
 
 
-
 def sanitize_folder_name(name):
-    # Remove any character that is not alphanumeric, space, minus, or underscore
-    return re.sub(r'[^\w\s-]', '', name).strip()
+    # Remove any character that is a valid character in a folder name
+    return re.sub(r'[<>:"/\\|?*]', '', name).strip()
 
 def append_decimal_if_needed(s):
     if '.' not in s:
