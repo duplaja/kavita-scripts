@@ -32,3 +32,8 @@ Various scripts to use with Kavita
 * This one is fairly slow / experimental. Feel free to tweak it to make it your own.
 * If you backtrack in a book, that may affect the output.
 
+## [Rename Series Folders in Database](https://github.com/duplaja/kavita-scripts/blob/main/rename-folders-in-db.py)
+
+* Useful if you want to change your series folder paths / names, without losing reading progress, etc.
+* Be sure to stop Kavita first, and back up your database file
+* This script assumes you manually rename your folders. You could fairly easily automate that, using the dict.
