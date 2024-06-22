@@ -176,13 +176,10 @@ def get_epub_metadata(epub_path):
     
     return title, author,series_name, series_index
 
-def convert_epub(input_file, output_location, author, title, series, series_index):
-
-    # Sanitize the series name for the folder
-    sanitized_series = sanitize_folder_name(series)
+def convert_epub(input_file, output_location, output_directory, author, title, series, series_index):
 
     # Determine output directory and file paths
-    output_dir = sanitized_series
+    output_dir = sanitize_folder_name(output_directory)
 
     output_dir_path = Path(output_location+'/'+output_dir)
 
@@ -247,8 +244,9 @@ def process_epub():
         title = title_entry.get()
         series = series_entry.get()
         series_index = series_index_entry.get()
+        output_directory = series_folder_entry.get()
 
-        convert_epub( input_file, output_location, author, title, series, series_index)
+        convert_epub( input_file, output_location, output_directory, author, title, series, series_index)
 
         done_loading_indicator()
     
@@ -260,7 +258,7 @@ def process_epub():
 
 def show_loading_indicator():
     loading_label.config(text="Processing, please wait...")
-    loading_label.grid(row=7, column=0, columnspan=3, pady=10)
+    loading_label.grid(row=9, column=0, columnspan=3, pady=10)
     app.update_idletasks()
 
 
@@ -270,7 +268,7 @@ def hide_loading_indicator():
 
 def done_loading_indicator():
     loading_label.config(text="Done Converting. You may choose another epub or Exit.")
-    loading_label.grid(row=7, column=0, columnspan=3, pady=10)
+    loading_label.grid(row=9, column=0, columnspan=3, pady=10)
     app.update_idletasks()
 
 def update_dropdown():
@@ -295,6 +293,7 @@ def clear_fields(clear_file = True):
     if clear_file:
         input_file_path.set("")
     
+    series_folder_entry.delete(0,tk.END)
     author_entry.delete(0, tk.END)
     title_entry.delete(0, tk.END)
     series_entry.delete(0, tk.END)
@@ -303,6 +302,8 @@ def clear_fields(clear_file = True):
 
 def validate_fields():
     if not input_file_path.get().strip():
+        return False
+    if not series_folder_entry.get().strip():
         return False
     if not author_entry.get().strip():
         return False
@@ -354,6 +355,7 @@ def browse_file():
             author_entry.insert(0, author)
         if series:
             series_entry.insert(0, series)
+            series_folder_entry.insert(0, series)
         if series_index:
             series_index_entry.insert(0, series_index)
         
@@ -391,36 +393,41 @@ ttk.Button(frame, text="Browse", command=browse_file).grid(row=0, column=2, padx
 current_dir = Path(kavita_base_path)
 
 # Dropdown for Library Root
-ttk.Label(frame, text="Library Dir:").grid(row=1, column=0, padx=10, pady=5)
+ttk.Label(frame, text="Library Folder\n(Output Path):").grid(row=1, column=0, padx=10, pady=5)
 selected_folder = tk.StringVar()
 dropdown = ttk.OptionMenu(frame, selected_folder, current_dir)
 dropdown.grid(row=1, column=1, padx=10, pady=5, sticky='ew')
 
-ttk.Label(frame, text="Author:").grid(row=2, column=0, padx=10, pady=5)
+ttk.Label(frame, text="Series Folder\n(Output Dir):").grid(row=2, column=0, padx=10, pady=5)
+series_folder_entry = ttk.Entry(frame, width=50)
+series_folder_entry.grid(row=2, column=1, padx=10, pady=5)
+
+ttk.Label(frame, text="Epub Metadata", font=('Helvetica', 16)).grid(row=3, column=0, columnspan=3, padx=10, pady=10)
+
+ttk.Label(frame, text="Author:").grid(row=4, column=0, padx=10, pady=5)
 author_entry = ttk.Entry(frame, width=50)
-author_entry.grid(row=2, column=1, padx=10, pady=5)
+author_entry.grid(row=4, column=1, padx=10, pady=5)
 
-ttk.Label(frame, text="Title:").grid(row=3, column=0, padx=10, pady=5)
+ttk.Label(frame, text="Title:").grid(row=5, column=0, padx=10, pady=5)
 title_entry = ttk.Entry(frame, width=50)
-title_entry.grid(row=3, column=1, padx=10, pady=5)
+title_entry.grid(row=5, column=1, padx=10, pady=5)
 
-ttk.Label(frame, text="Series:").grid(row=4, column=0, padx=10, pady=5)
+ttk.Label(frame, text="Series:").grid(row=6, column=0, padx=10, pady=5)
 series_entry = ttk.Entry(frame, width=50)
-series_entry.grid(row=4, column=1, padx=10, pady=5)
+series_entry.grid(row=6, column=1, padx=10, pady=5)
 
-ttk.Label(frame, text="Series Index:").grid(row=5, column=0, padx=10, pady=5)
+ttk.Label(frame, text="Series Index:").grid(row=7, column=0, padx=10, pady=5)
 series_index_entry = ttk.Entry(frame, width=50)
-series_index_entry.grid(row=5, column=1, padx=10, pady=5)
+series_index_entry.grid(row=7, column=1, padx=10, pady=5)
 
-ttk.Button(frame, text="Process Epub", command=process_epub).grid(row=6, column=0, columnspan=3, pady=10)
+ttk.Button(frame, text="Process Epub", command=process_epub).grid(row=8, column=0, columnspan=3, pady=10)
 
 # Create the loading indicator
 loading_label = ttk.Label(frame, text="")
-loading_label.grid(row=7, column=0, columnspan=3, pady=10)
+loading_label.grid(row=9, column=0, columnspan=3, pady=10)
 loading_label.grid_remove()  # Hide initially
 
-ttk.Button(frame, text="Clear All", command=clear_fields).grid(row=8, column=0, columnspan=3, pady=10)
-ttk.Button(frame, text="Exit", command=app.quit).grid(row=9, column=0, columnspan=3, pady=10)
+ttk.Button(frame, text="Clear All", command=clear_fields).grid(row=10, column=0, columnspan=3, pady=10)
 
 frame.columnconfigure(1, weight=1)
 frame.grid_columnconfigure(1, weight=1)
